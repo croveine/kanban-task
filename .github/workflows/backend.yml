@@ -1,0 +1,54 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'backend/**'
+  pull_request:
+    paths:
+      - 'backend/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: backend/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        cd backend
+        npm ci
+
+    - name: Run ESLint
+      run: |
+        cd backend
+        npm run lint
+
+    - name: Run Prettier check
+      run: |
+        cd backend
+        npm run format:check
+
+    - name: Run TypeScript check
+      run: |
+        cd backend
+        npm run type-check
+
+    - name: Run tests
+      run: |
+        cd backend
+        npm run test 
