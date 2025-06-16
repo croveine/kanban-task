@@ -47,7 +47,7 @@ export class BoardService {
 
   async create(createBoardDto: CreateBoardDto): Promise<Board> {
     try {
-      const boardId = uuidv4();
+      const boardId = createBoardDto.boardId || uuidv4();
       const createdBoard = new this.boardModel({
         ...createBoardDto,
         boardId,

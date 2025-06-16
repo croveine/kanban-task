@@ -8,4 +8,8 @@ export class CreateBoardDto {
   @IsString()
   @IsOptional()
   status?: string;
+
+  @IsString()
+  @IsOptional()
+  boardId?: string;
 } 

@@ -63,8 +63,7 @@ export const createBoard = createAsyncThunk(
   'boards/createBoard',
   async (data: Omit<Board, 'boardId'>) => {
     const response = await api.post('/boards', {
-      ...data,
-      boardId: crypto.randomUUID()
+      name: data.name
     });
     return response.data;
   }
