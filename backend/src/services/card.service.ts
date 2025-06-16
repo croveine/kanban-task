@@ -36,7 +36,7 @@ export class CardService {
   async create(createCardDto: CreateCardDto): Promise<Card> {
     const createdCard = new this.cardModel({
       ...createCardDto,
-      id: uuidv4(),
+      cardId: uuidv4(),
     });
     return createdCard.save();
   }

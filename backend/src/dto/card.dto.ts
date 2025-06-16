@@ -17,6 +17,10 @@ export class CreateCardDto {
   @IsNumber()
   @IsOptional()
   order?: number;
+
+  @IsString()
+  @IsOptional()
+  cardId?: string;
 }
 
 export class UpdateCardDto {

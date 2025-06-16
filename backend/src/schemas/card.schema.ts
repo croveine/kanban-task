@@ -14,14 +14,20 @@ export class Card extends Document {
   @Prop()
   description: string;
 
-  @Prop({ required: true, enum: ['todo', 'inProgress', 'done'] })
-  columnId: string;
-
   @Prop({ required: true })
   boardId: string;
 
   @Prop({ required: true })
+  columnId: string;
+
+  @Prop({ default: 0 })
   order: number;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt: Date;
 }
 
 export const CardSchema = SchemaFactory.createForClass(Card); 
