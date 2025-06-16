@@ -24,12 +24,7 @@ const CreateBoard: React.FC = () => {
     try {
       console.log('Dispatching createBoard action');
       const result = await dispatch(createBoard({
-        name: name.trim(),
-        todoCards: [],
-        inProgressCards: [],
-        doneCards: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
+        name: name.trim()
       })).unwrap();
       
       console.log('Board creation result:', result);
