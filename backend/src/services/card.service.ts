@@ -1,17 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Document } from 'mongoose';
-import { Card } from '../schemas/card.schema';
+import { Card, CardDocument } from '../schemas/card.schema';
 import { CreateCardDto, UpdateCardDto } from '../dto/card.dto';
 import { UpdateCardPositionDto } from '../dto/update-card-position.dto';
-import * as crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class CardService {
   private readonly logger = new Logger(CardService.name);
 
   constructor(
-    @InjectModel(Card.name) private readonly cardModel: Model<Card>,
+    @InjectModel(Card.name) private readonly cardModel: Model<CardDocument>,
   ) {}
 
   private transformCard(card: Document & Card) {
@@ -34,63 +34,50 @@ export class CardService {
   }
 
   async create(createCardDto: CreateCardDto): Promise<Card> {
-    try {
-      const lastCard = await this.cardModel
-        .findOne({ columnId: createCardDto.columnId })
-        .sort({ order: -1 })
-        .exec();
-
-      const newCard = new this.cardModel({
-        ...createCardDto,
-        cardId: crypto.randomUUID(),
-        order: lastCard ? lastCard.order + 1 : 0,
-      });
-
-      const savedCard = await newCard.save();
-      return this.transformCard(savedCard);
-    } catch (error) {
-      this.logger.error(`Failed to create card: ${error.message}`);
-      throw error;
-    }
+    const createdCard = new this.cardModel({
+      ...createCardDto,
+      id: uuidv4(),
+    });
+    return createdCard.save();
   }
 
-  async findOne(cardId: string): Promise<Card> {
+  async findOne(id: string): Promise<Card> {
     try {
-      const card = await this.cardModel.findOne({ cardId }).exec();
+      const card = await this.cardModel.findOne({ id }).exec();
       if (!card) {
-        throw new NotFoundException(`Card with ID ${cardId} not found`);
+        throw new NotFoundException(`Card with ID ${id} not found`);
       }
       return this.transformCard(card);
     } catch (error) {
-      this.logger.error(`Failed to find card ${cardId}: ${error.message}`);
+      this.logger.error(`Failed to find card ${id}: ${error.message}`);
       throw error;
     }
   }
 
-  async update(cardId: string, updateCardDto: UpdateCardDto): Promise<Card> {
+  async update(id: string, updateCardDto: UpdateCardDto): Promise<Card> {
     try {
       const updatedCard = await this.cardModel
-        .findOneAndUpdate({ cardId }, updateCardDto, { new: true })
+        .findOneAndUpdate({ id }, updateCardDto, { new: true })
         .exec();
       if (!updatedCard) {
-        throw new NotFoundException(`Card with ID ${cardId} not found`);
+        throw new NotFoundException(`Card with ID ${id} not found`);
       }
       return this.transformCard(updatedCard);
     } catch (error) {
-      this.logger.error(`Failed to update card ${cardId}: ${error.message}`);
+      this.logger.error(`Failed to update card ${id}: ${error.message}`);
       throw error;
     }
   }
 
-  async remove(cardId: string): Promise<Card> {
+  async remove(id: string): Promise<Card> {
     try {
-      const deletedCard = await this.cardModel.findOneAndDelete({ cardId }).exec();
+      const deletedCard = await this.cardModel.findOneAndDelete({ id }).exec();
       if (!deletedCard) {
-        throw new NotFoundException(`Card with ID ${cardId} not found`);
+        throw new NotFoundException(`Card with ID ${id} not found`);
       }
       return this.transformCard(deletedCard);
     } catch (error) {
-      this.logger.error(`Failed to delete card ${cardId}: ${error.message}`);
+      this.logger.error(`Failed to delete card ${id}: ${error.message}`);
       throw error;
     }
   }
@@ -113,7 +100,7 @@ export class CardService {
       }
 
       // Find the card
-      const card = await this.cardModel.findOne({ cardId: id });
+      const card = await this.cardModel.findOne({ id });
       if (!card) {
         this.logger.error(`Card with ID ${id} not found`);
         throw new NotFoundException(`Card with ID ${id} not found`);
