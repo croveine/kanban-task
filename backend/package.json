@@ -6,7 +6,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "build": "npx @nestjs/cli build",
+    "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
     "start": "nest start",

@@ -17,7 +17,9 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "lib": ["ES2021", "DOM"],
-    "moduleResolution": "node"
+    "lib": ["ES2021"],
+    "moduleResolution": "node",
+    "types": ["node"],
+    "typeRoots": ["./node_modules/@types"]
   }
 }
